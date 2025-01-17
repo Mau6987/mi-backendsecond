@@ -1,8 +1,8 @@
 import { usuario as Usuario } from '../models/usuarios.js';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from "bcryptjs";
 import { Sequelize } from 'sequelize';
-
+//coai
 const SECRET_KEY = 'tu_clave_secreta'; // Debe ser una clave secreta segura y mantenida en el archivo de configuración
 
 export const login = async (req, res) => {
