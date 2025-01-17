@@ -1,6 +1,6 @@
 import { usuario as Usuario } from "../models/usuarios.js";
-import bcrypt from 'bcrypt';
-
+import bcrypt from "bcryptjs";
+//camio
 // Obtener todos los usuarios
 export const getUsuarios = async (req, res) => {
   try {
