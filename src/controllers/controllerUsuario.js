@@ -343,3 +343,20 @@ export const verificarBloqueo = async (req, res) => {
     res.status(500).json({ message: "Error al verificar el bloqueo del usuario" });
   }
 };
+export const getUsuariosPorRol = async (req, res) => {
+  try {
+    const usuarios = await usuario.findAll({
+      where: {
+        rol: {
+          [Op.or]: ["propietario", "conductor"], // Filtrar por roles
+        },
+        activo: true, // Solo usuarios activos
+      },
+      attributes: ["id", "nombre", "username", "correo", "rol"], // Ajusta los atributos según sea necesario
+    });
+    res.status(200).json(usuarios);
+  } catch (error) {
+    console.error("Error al obtener usuarios por rol:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+};

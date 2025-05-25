@@ -8,7 +8,8 @@ import {
   verificarTarjeta,
   bloquearUsuario,
   desbloquearUsuario,
-  verificarBloqueo
+  verificarBloqueo,
+  getUsuariosPorRol
 } from "../controllers/controllerUsuario.js";
 import { login, refreshToken } from "../controllers/authController.js";
 import { 
@@ -75,6 +76,8 @@ router.post("/usuarios", createUsuario);
 router.put("/usuarios/:id", updateUsuario);
 router.delete("/usuarios/:id", deleteUsuario);
 
+
+router.get("/usuariosrol", getUsuariosPorRol);
 // BLOQUEO DE USUARIOS (nuevos endpoints)
 router.post("/usuarios/:id/bloquear", bloquearUsuario);
 router.post("/usuarios/:id/desbloquear", desbloquearUsuario);
