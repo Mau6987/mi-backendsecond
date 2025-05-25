@@ -345,7 +345,7 @@ export const verificarBloqueo = async (req, res) => {
 };
 export const getUsuariosPorRol = async (req, res) => {
   try {
-    const usuarios = await usuario.findAll({
+    const usuarios = await Usuario.findAll({
       where: {
         rol: {
           [Op.or]: ["propietario", "conductor"], // Filtrar por roles
