@@ -1,0 +1,30 @@
+service: backendsistemaintegrado
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  timeout: 30
+  environment:
+    DATABASE_URL: "postgresql://sistemapinos2_user:NjVGJMMsPMquvMLXhSP6x44dCsjzPfv0@dpg-cuomkgqj1k6c739b8he0-a.oregon-postgres.render.com/sistemapinos2"
+    JWT_SECRET: "mi-super-secreto"
+    NODE_ENV: "production"
+functions:
+  app:
+    handler: src/index.handler  # Correcto si index.js está dentro de src/
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+package:
+  include:
+    -node_modules/**
+    - src/**
+    - database/**
+    - controllers/**
+    - models/**
+    - routes/**
+  exclude:
+    - test/**
+    - .gitignore
+plugins:
+  - serverless-offline

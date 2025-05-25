@@ -1,0 +1,64 @@
+Date : 2025-03-20 14:59:26
+Directory : c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado
+Total : 29 files,  4868 codes, 81 comments, 248 blanks, all 5197 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JSON       |          5 |      3,597 |          0 |          2 |      3,599 |
+| JavaScript |         23 |      1,241 |         81 |        243 |      1,565 |
+| YAML       |          1 |         30 |          0 |          3 |         33 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                                                           | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                                                              |         29 |      4,868 |         81 |        248 |      5,197 |
+| . (Files)                                                                                                                                                      |          7 |      2,749 |          8 |         27 |      2,784 |
+| .serverless                                                                                                                                                    |          3 |        980 |          0 |          0 |        980 |
+| src                                                                                                                                                            |         19 |      1,139 |         73 |        221 |      1,433 |
+| src (Files)                                                                                                                                                    |          2 |         35 |          1 |         10 |         46 |
+| src\controllers                                                                                                                                                |         10 |        895 |         59 |        163 |      1,117 |
+| src\database                                                                                                                                                   |          1 |         30 |          3 |          6 |         39 |
+| src\middleware                                                                                                                                                 |          1 |         26 |          0 |          8 |         34 |
+| src\models                                                                                                                                                     |          4 |         90 |          1 |         13 |        104 |
+| src\routes                                                                                                                                                     |          1 |         63 |          9 |         21 |         93 |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                                                                       | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\.serverless\cloudformation-template-create-stack.json | JSON       |         82 |          0 |          0 |         82 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\.serverless\cloudformation-template-update-stack.json | JSON       |        368 |          0 |          0 |        368 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\.serverless\serverless-state.json                     | JSON       |        530 |          0 |          0 |        530 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\asignar.js                                            | JavaScript |         33 |          2 |          6 |         41 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\crear.js                                              | JavaScript |         37 |          6 |          9 |         52 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\crear2.js                                             | JavaScript |         18 |          0 |          4 |         22 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\initDb.js                                             | JavaScript |         14 |          0 |          3 |         17 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\package-lock.json                                     | JSON       |      2,586 |          0 |          1 |      2,587 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\package.json                                          | JSON       |         31 |          0 |          1 |         32 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\serverless.yml                                        | YAML       |         30 |          0 |          3 |         33 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\app.js                                            | JavaScript |         16 |          0 |          6 |         22 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\authController.js                     | JavaScript |         61 |          1 |         13 |         75 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\cargaAguaController.js                | JavaScript |        145 |          7 |         17 |        169 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\controlerCargaPropietario.js          | JavaScript |         49 |          6 |          9 |         64 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\controllerCargaCliente.js             | JavaScript |         16 |          0 |          4 |         20 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\controllerPagosPropietario.js         | JavaScript |         53 |          6 |         12 |         71 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\controllerPerfil.js                   | JavaScript |         57 |          0 |         11 |         68 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\controllerTipoDeCamion.js             | JavaScript |         78 |          0 |         19 |         97 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\controllerUsuario.js                  | JavaScript |        142 |          6 |         24 |        172 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\pagodeCargaAguaController.js          | JavaScript |        294 |         33 |         53 |        380 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\controllers\refreshToken.js                       | JavaScript |          0 |          0 |          1 |          1 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\database\database.js                              | JavaScript |         30 |          3 |          6 |         39 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\index.js                                          | JavaScript |         19 |          1 |          4 |         24 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\middleware\verifyToken.js                         | JavaScript |         26 |          0 |          8 |         34 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\models\cargaAgua.js                               | JavaScript |         16 |          0 |          4 |         20 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\models\pagodeCargaAgua.js                         | JavaScript |         15 |          1 |          4 |         20 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\models\tipoDeCamion.js                            | JavaScript |          7 |          0 |          2 |          9 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\models\usuarios.js                                | JavaScript |         52 |          0 |          3 |         55 |
+| c:\Users\mau69\Documents\prueba\backendsistemaintegrado2\backendsistemaintegrado\backendsistemaintegrado\src\routes\routes.js                                  | JavaScript |         63 |          9 |         21 |         93 |
+| Total                                                                                                                                                          |            |      4,868 |         81 |        248 |      5,197 |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
