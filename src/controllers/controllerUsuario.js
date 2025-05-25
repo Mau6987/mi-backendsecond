@@ -2,6 +2,7 @@ import { usuario as Usuario } from "../models/usuarios.js";
 import { cargaAgua } from "../models/cargaAgua.js";
 import { pagoCargaAgua } from "../models/pagodeCargaAgua.js";
 import bcrypt from "bcryptjs";
+import { Op } from "sequelize";
 
 // Obtener todos los usuarios (solo activos por defecto)
 export const getUsuarios = async (req, res) => {
