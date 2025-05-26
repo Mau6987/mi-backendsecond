@@ -109,6 +109,9 @@ router.post('/registroRFID', registrarCargaPorRFID);
 router.get('/perfil/:id', getPerfil);
 router.put('/perfil/:id', updatePerfil);
 
+// CARGAS DE AGUA CON DEUDA PARA UN PROPIETARIO
+router.get("/cargasPropietarioDeuda/:id", getCargasDePropietarioDeuda); // Nueva ruta agregada
+
 // CARGAS CLIENTE Y PROPIETARIO
 router.get('/cargascliente/:id', getCargasDeUsuario);
 router.get('/cargasPropietario/:id', getCargasDePropietario);
