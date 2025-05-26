@@ -440,3 +440,51 @@ export const reporteRendimientoPorTipoCamion = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
+
+// Reporte de historial de precios
+export const reporteHistorialPrecios = async (req, res) => {
+  try {
+    const historialPrecios = await precioCargaAgua.findAll({
+      include: [
+        {
+          model: tipoDeCamion,
+          as: "tipoCamion",
+        },
+        {
+          model: usuario,
+          as: "usuarioCreacion",
+          attributes: ["id", "nombre", "username"],
+        },
+        {
+          model: usuario,
+          as: "usuarioModificacion",
+          attributes: ["id", "nombre", "username"],
+        },
+      ],
+      order: [
+        ["tipoCamionId", "ASC"],
+        ["fechaCreacion", "DESC"],
+      ],
+    });
+
+    // Agrupar por tipo de camión
+    const preciosPorTipoCamion = {};
+    historialPrecios.forEach((precio) => {
+      const tipoCamionId = precio.tipoCamionId;
+      if (!preciosPorTipoCamion[tipoCamionId]) {
+        preciosPorTipoCamion[tipoCamionId] = {
+          tipoCamion: precio.tipoCamion,
+          precios: [],
+        };
+      }
+      preciosPorTipoCamion[tipoCamionId].precios.push(precio);
+    });
+
+    res.status(200).json({
+      preciosPorTipoCamion: Object.values(preciosPorTipoCamion),
+    });
+  } catch (error) {
+    console.error("Error al generar reporte de historial de precios:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
