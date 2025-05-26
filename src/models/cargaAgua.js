@@ -29,6 +29,11 @@ export const cargaAgua = bd.define('cargas_agua', {
   costo: {
     type: DataTypes.DOUBLE,
     allowNull: false
+  },
+  activo: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true, // Por defecto, la carga está activa
+    allowNull: false
   }
 });
 
@@ -43,3 +48,4 @@ cargaAgua.belongsTo(usuario, { foreignKey: 'usuarioId', sourceKey: 'id' });
 precioCargaAgua.hasMany(cargaAgua, { foreignKey: 'precioId', sourceKey: 'id' });
 cargaAgua.belongsTo(precioCargaAgua, { foreignKey: 'precioId', sourceKey: 'id' });
 
+export default cargaAgua;
