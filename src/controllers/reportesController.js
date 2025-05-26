@@ -3,6 +3,7 @@ import { pagoCargaAgua } from "../models/pagodeCargaAgua.js";
 import { usuario } from "../models/usuarios.js";
 import { tipoDeCamion } from "../models/tipoDeCamion.js";
 import { Op, Sequelize } from "sequelize";
+
 // Reporte de cargas de agua por período
 export const reporteCargasPorPeriodo = async (req, res) => {
   const { fechaInicio, fechaFin, usuarioId, tipoCamionId, estado } = req.body;
@@ -40,7 +41,7 @@ export const reporteCargasPorPeriodo = async (req, res) => {
         },
         {
           model: tipoDeCamion,
-          as: "tiposDeCamion", // Asegúrate que coincida con el alias definido en la relación
+          as: "tiposDeCamion",
         },
       ],
       order: [["fechaHora", "DESC"]],
@@ -75,7 +76,6 @@ export const reporteCargasPorPeriodo = async (req, res) => {
     res.status(500).json({ message: "Error interno del servidor" });
   }
 };
-
 
 // Reporte de pagos por período
 export const reportePagosPorPeriodo = async (req, res) => {
@@ -139,7 +139,6 @@ export const reporteUsuariosPorActividad = async (req, res) => {
   const { fechaInicio, fechaFin, rol } = req.body;
 
   try {
-    // Obtener usuarios según el rol
     const whereUsuario = {
       activo: true,
     };
@@ -153,7 +152,6 @@ export const reporteUsuariosPorActividad = async (req, res) => {
       attributes: ["id", "nombre", "username", "correo", "ci", "rol", "bloqueado"],
     });
 
-    // Preparar rango de fechas para consultas
     const rangoFechas = {};
     if (fechaInicio && fechaFin) {
       rangoFechas.fechaHora = {
@@ -161,10 +159,8 @@ export const reporteUsuariosPorActividad = async (req, res) => {
       };
     }
 
-    // Obtener actividad para cada usuario
     const usuariosConActividad = await Promise.all(
       usuarios.map(async (user) => {
-        // Cargas del usuario
         const cargas = await cargaAgua.findAll({
           where: {
             usuarioId: user.id,
@@ -173,7 +169,6 @@ export const reporteUsuariosPorActividad = async (req, res) => {
           },
         });
 
-        // Pagos del usuario
         const pagos = await pagoCargaAgua.findAll({
           where: {
             usuarioId: user.id,
@@ -182,7 +177,6 @@ export const reporteUsuariosPorActividad = async (req, res) => {
           },
         });
 
-        // Calcular estadísticas
         const totalCargas = cargas.length;
         const cargasPagadas = cargas.filter((carga) => carga.estado === "pagado").length;
         const cargasDeuda = cargas.filter((carga) => carga.estado === "deuda").length;
@@ -215,7 +209,6 @@ export const reporteUsuariosPorActividad = async (req, res) => {
 // Reporte de deudas por usuario
 export const reporteDeudas = async (req, res) => {
   try {
-    // Obtener todos los usuarios activos
     const usuarios = await usuario.findAll({
       where: {
         activo: true,
@@ -224,10 +217,8 @@ export const reporteDeudas = async (req, res) => {
       attributes: ["id", "nombre", "username", "correo", "ci", "rol"],
     });
 
-    // Obtener deudas para cada usuario
     const usuariosConDeuda = await Promise.all(
       usuarios.map(async (user) => {
-        // Cargas en deuda del usuario
         const cargasDeuda = await cargaAgua.findAll({
           where: {
             usuarioId: user.id,
@@ -237,7 +228,6 @@ export const reporteDeudas = async (req, res) => {
           include: [tipoDeCamion],
         });
 
-        // Calcular monto total de deuda
         const montoDeuda = cargasDeuda.reduce((sum, carga) => sum + carga.costo, 0);
 
         return {
@@ -251,10 +241,8 @@ export const reporteDeudas = async (req, res) => {
       }),
     );
 
-    // Filtrar solo usuarios con deuda
     const deudores = usuariosConDeuda.filter((user) => user.deuda.cantidadCargasDeuda > 0);
 
-    // Calcular estadísticas generales
     const totalDeudores = deudores.length;
     const montoTotalDeuda = deudores.reduce((sum, user) => sum + user.deuda.montoDeuda, 0);
     const totalCargasDeuda = deudores.reduce((sum, user) => sum + user.deuda.cantidadCargasDeuda, 0);
@@ -274,48 +262,36 @@ export const reporteDeudas = async (req, res) => {
   }
 };
 
-// Reporte de ingresos por período
+// FUNCIÓN CORREGIDA: Reporte de ingresos por período
 export const reporteIngresos = async (req, res) => {
   const { fechaInicio, fechaFin, agruparPor } = req.body;
 
   try {
-    // Validar fechas
     if (!fechaInicio || !fechaFin) {
       return res.status(400).json({ message: "Se requieren fechas de inicio y fin" });
     }
 
-    // Determinar agrupación
-    let groupByClause;
-    let dateFormat;
+    // CORRECCIÓN: Mapear valores en español a inglés para PostgreSQL
+    const mapeoUnidades = {
+      'dia': 'day',
+      'semana': 'week', 
+      'mes': 'month',
+      'año': 'year',
+      'day': 'day',
+      'week': 'week',
+      'month': 'month',
+      'year': 'year'
+    };
 
-    switch (agruparPor) {
-      case "dia":
-        dateFormat = "YYYY-MM-DD";
-        groupByClause = [Sequelize.fn("DATE", Sequelize.col("fechaHora"))];
-        break;
-      case "semana":
-        dateFormat = "YYYY-WW";
-        groupByClause = [
-          Sequelize.fn("EXTRACT", Sequelize.literal('YEAR FROM "fechaHora"')),
-          Sequelize.fn("EXTRACT", Sequelize.literal('WEEK FROM "fechaHora"')),
-        ];
-        break;
-      case "mes":
-        dateFormat = "YYYY-MM";
-        groupByClause = [
-          Sequelize.fn("EXTRACT", Sequelize.literal('YEAR FROM "fechaHora"')),
-          Sequelize.fn("EXTRACT", Sequelize.literal('MONTH FROM "fechaHora"')),
-        ];
-        break;
-      default:
-        dateFormat = "YYYY-MM-DD";
-        groupByClause = [Sequelize.fn("DATE", Sequelize.col("fechaHora"))];
-    }
+    // Obtener la unidad correcta en inglés
+    const unidadPostgreSQL = mapeoUnidades[agruparPor] || 'day';
+
+    console.log(`Agrupando por: ${agruparPor} -> ${unidadPostgreSQL}`);
 
     // Consulta para obtener ingresos agrupados
     const ingresos = await pagoCargaAgua.findAll({
       attributes: [
-        [Sequelize.fn("date_trunc", agruparPor, Sequelize.col("fechaHora")), "periodo"],
+        [Sequelize.fn("date_trunc", unidadPostgreSQL, Sequelize.col("fechaHora")), "periodo"],
         [Sequelize.fn("SUM", Sequelize.col("monto")), "total"],
         [Sequelize.fn("COUNT", Sequelize.col("id")), "cantidad"],
       ],
@@ -327,6 +303,7 @@ export const reporteIngresos = async (req, res) => {
       },
       group: ["periodo"],
       order: [[Sequelize.literal("periodo"), "ASC"]],
+      raw: true, // Agregar esto para obtener datos planos
     });
 
     // Consulta para obtener totales
@@ -334,6 +311,7 @@ export const reporteIngresos = async (req, res) => {
       attributes: [
         [Sequelize.fn("SUM", Sequelize.col("monto")), "totalIngresos"],
         [Sequelize.fn("COUNT", Sequelize.col("id")), "totalPagos"],
+        [Sequelize.fn("AVG", Sequelize.col("monto")), "promedioMontoPorPago"],
       ],
       where: {
         fechaHora: {
@@ -341,20 +319,40 @@ export const reporteIngresos = async (req, res) => {
         },
         activo: true,
       },
+      raw: true,
     });
 
+    // Formatear los resultados
+    const ingresosFormateados = ingresos.map(ingreso => ({
+      periodo: ingreso.periodo,
+      total: parseFloat(ingreso.total) || 0,
+      cantidad: parseInt(ingreso.cantidad) || 0
+    }));
+
+    const totalesFormateados = {
+      totalIngresos: parseFloat(totales[0]?.totalIngresos) || 0,
+      totalPagos: parseInt(totales[0]?.totalPagos) || 0,
+      promedioMontoPorPago: parseFloat(totales[0]?.promedioMontoPorPago) || 0
+    };
+
     res.status(200).json({
-      ingresos,
-      totales: totales[0],
+      ingresos: ingresosFormateados,
+      totales: totalesFormateados,
+      estadisticas: totalesFormateados, // Alias para compatibilidad con frontend
       parametros: {
         fechaInicio,
         fechaFin,
         agruparPor,
+        unidadUsada: unidadPostgreSQL
       },
     });
   } catch (error) {
     console.error("Error al generar reporte de ingresos:", error);
-    res.status(500).json({ message: "Error interno del servidor" });
+    res.status(500).json({ 
+      message: "Error interno del servidor",
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
@@ -379,6 +377,7 @@ export const reporteUsuariosBloqueados = async (req, res) => {
     res.status(500).json({ message: "Error interno del servidor" });
   }
 };
+
 export const reporteRendimientoPorTipoCamion = async (req, res) => {
   const { fechaInicio, fechaFin } = req.body;
 
@@ -401,12 +400,11 @@ export const reporteRendimientoPorTipoCamion = async (req, res) => {
           },
         });
 
-        // Calcular estadísticas del rendimiento basadas solo en cargas y sus costos
         const totalCargas = cargas.length;
         const cargasPagadas = cargas.filter(c => c.estado === "pagado").length;
         const cargasDeuda = cargas.filter(c => c.estado === "deuda").length;
         const totalCosto = cargas.reduce((sum, carga) => sum + carga.costo, 0);
-        const totalLitros = totalCargas * tipo.cantidadDeAgua; // asumiendo cantidadDeAgua es volumen por carga
+        const totalLitros = totalCargas * tipo.cantidadDeAgua;
 
         return {
           tipoCamion: tipo,
@@ -423,7 +421,6 @@ export const reporteRendimientoPorTipoCamion = async (req, res) => {
       })
     );
 
-    // Totales generales
     const totalCargas = rendimientoPorTipo.reduce((sum, item) => sum + item.estadisticas.totalCargas, 0);
     const totalCosto = rendimientoPorTipo.reduce((sum, item) => sum + item.estadisticas.totalCosto, 0);
     const totalLitros = rendimientoPorTipo.reduce((sum, item) => sum + item.estadisticas.totalLitros, 0);
@@ -441,53 +438,5 @@ export const reporteRendimientoPorTipoCamion = async (req, res) => {
   } catch (error) {
     console.error("Error al generar reporte de rendimiento por tipo de camión:", error);
     return res.status(500).json({ message: "Error interno del servidor" });
-  }
-};
-
-// Reporte de historial de precios
-export const reporteHistorialPrecios = async (req, res) => {
-  try {
-    const historialPrecios = await precioCargaAgua.findAll({
-      include: [
-        {
-          model: tipoDeCamion,
-          as: "tipoCamion",
-        },
-        {
-          model: usuario,
-          as: "usuarioCreacion",
-          attributes: ["id", "nombre", "username"],
-        },
-        {
-          model: usuario,
-          as: "usuarioModificacion",
-          attributes: ["id", "nombre", "username"],
-        },
-      ],
-      order: [
-        ["tipoCamionId", "ASC"],
-        ["fechaCreacion", "DESC"],
-      ],
-    });
-
-    // Agrupar por tipo de camión
-    const preciosPorTipoCamion = {};
-    historialPrecios.forEach((precio) => {
-      const tipoCamionId = precio.tipoCamionId;
-      if (!preciosPorTipoCamion[tipoCamionId]) {
-        preciosPorTipoCamion[tipoCamionId] = {
-          tipoCamion: precio.tipoCamion,
-          precios: [],
-        };
-      }
-      preciosPorTipoCamion[tipoCamionId].precios.push(precio);
-    });
-
-    res.status(200).json({
-      preciosPorTipoCamion: Object.values(preciosPorTipoCamion),
-    });
-  } catch (error) {
-    console.error("Error al generar reporte de historial de precios:", error);
-    res.status(500).json({ message: "Error interno del servidor" });
   }
 };
