@@ -154,14 +154,10 @@ export const deleteCargaAgua = async (req, res) => {
 // Resto de funciones (registrarCargaPorRFID, getCargasPorParametros, etc.) se mantienen igual
 
 export const registrarCargaPorRFID = async (req, res) => {
-  const { numeroTarjetaRFID, tipoCamionId } = req.body;
+  const { numeroTarjetaRFID, tipoCamionId = 1 } = req.body;
 
   if (!numeroTarjetaRFID) {
     return res.status(400).json({ message: "Número de tarjeta RFID es requerido" });
-  }
-
-  if (!tipoCamionId) {
-    return res.status(400).json({ message: "ID del tipo de camión es requerido" });
   }
 
   try {
@@ -179,7 +175,6 @@ export const registrarCargaPorRFID = async (req, res) => {
       });
     }
 
-    // Obtener el último precio activo
     const precioActual = await precioCargaAgua.findOne({
       where: { activo: true },
       order: [["fechaCreacion", "DESC"]],
@@ -204,6 +199,7 @@ export const registrarCargaPorRFID = async (req, res) => {
     res.status(500).json({ message: "Error al registrar la carga de agua" });
   }
 };
+
 
 export const getCargasPorParametros = async (req, res) => {
   const { fechaInicio, fechaFin, estado, usuarioId, activo } = req.body;
