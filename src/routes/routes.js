@@ -71,7 +71,7 @@ import {
   getPagosPorParametros,
   getPagosPorParametros2,
   toggleActivoPago,
-} from '../controllers/pagoCargaAguaController.js'; 
+} from '../controllers/pagodeCargaAguaController.js'; 
 
 const router = Router();
 
