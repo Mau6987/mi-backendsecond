@@ -379,24 +379,18 @@ export const reporteUsuariosBloqueados = async (req, res) => {
     res.status(500).json({ message: "Error interno del servidor" });
   }
 };
-
-// Reporte de rendimiento por tipo de camión
 export const reporteRendimientoPorTipoCamion = async (req, res) => {
   const { fechaInicio, fechaFin } = req.body;
 
   try {
-    // Validar fechas
     if (!fechaInicio || !fechaFin) {
       return res.status(400).json({ message: "Se requieren fechas de inicio y fin" });
     }
 
-    // Obtener todos los tipos de camión
     const tiposCamion = await tipoDeCamion.findAll();
 
-    // Para cada tipo de camión, obtener estadísticas
     const rendimientoPorTipo = await Promise.all(
       tiposCamion.map(async (tipo) => {
-        // Cargas para este tipo de camión
         const cargas = await cargaAgua.findAll({
           where: {
             tipoCamionId: tipo.id,
@@ -407,12 +401,12 @@ export const reporteRendimientoPorTipoCamion = async (req, res) => {
           },
         });
 
-        // Calcular estadísticas
+        // Calcular estadísticas del rendimiento basadas solo en cargas y sus costos
         const totalCargas = cargas.length;
-        const cargasPagadas = cargas.filter((carga) => carga.estado === "pagado").length;
-        const cargasDeuda = cargas.filter((carga) => carga.estado === "deuda").length;
+        const cargasPagadas = cargas.filter(c => c.estado === "pagado").length;
+        const cargasDeuda = cargas.filter(c => c.estado === "deuda").length;
         const totalCosto = cargas.reduce((sum, carga) => sum + carga.costo, 0);
-        const totalLitros = totalCargas * tipo.cantidadDeAgua;
+        const totalLitros = totalCargas * tipo.cantidadDeAgua; // asumiendo cantidadDeAgua es volumen por carga
 
         return {
           tipoCamion: tipo,
@@ -426,15 +420,15 @@ export const reporteRendimientoPorTipoCamion = async (req, res) => {
             ingresoPromedioPorCarga: totalCargas > 0 ? totalCosto / totalCargas : 0,
           },
         };
-      }),
+      })
     );
 
-    // Calcular totales generales
+    // Totales generales
     const totalCargas = rendimientoPorTipo.reduce((sum, item) => sum + item.estadisticas.totalCargas, 0);
     const totalCosto = rendimientoPorTipo.reduce((sum, item) => sum + item.estadisticas.totalCosto, 0);
     const totalLitros = rendimientoPorTipo.reduce((sum, item) => sum + item.estadisticas.totalLitros, 0);
 
-    res.status(200).json({
+    return res.status(200).json({
       rendimientoPorTipo,
       totales: {
         totalCargas,
@@ -442,61 +436,10 @@ export const reporteRendimientoPorTipoCamion = async (req, res) => {
         totalLitros,
         ingresoPromedioPorCarga: totalCargas > 0 ? totalCosto / totalCargas : 0,
       },
-      parametros: {
-        fechaInicio,
-        fechaFin,
-      },
+      parametros: { fechaInicio, fechaFin },
     });
   } catch (error) {
     console.error("Error al generar reporte de rendimiento por tipo de camión:", error);
-    res.status(500).json({ message: "Error interno del servidor" });
-  }
-};
-
-// Reporte de historial de precios
-export const reporteHistorialPrecios = async (req, res) => {
-  try {
-    const historialPrecios = await precioCargaAgua.findAll({
-      include: [
-        {
-          model: tipoDeCamion,
-          as: "tipoCamion",
-        },
-        {
-          model: usuario,
-          as: "usuarioCreacion",
-          attributes: ["id", "nombre", "username"],
-        },
-        {
-          model: usuario,
-          as: "usuarioModificacion",
-          attributes: ["id", "nombre", "username"],
-        },
-      ],
-      order: [
-        ["tipoCamionId", "ASC"],
-        ["fechaCreacion", "DESC"],
-      ],
-    });
-
-    // Agrupar por tipo de camión
-    const preciosPorTipoCamion = {};
-    historialPrecios.forEach((precio) => {
-      const tipoCamionId = precio.tipoCamionId;
-      if (!preciosPorTipoCamion[tipoCamionId]) {
-        preciosPorTipoCamion[tipoCamionId] = {
-          tipoCamion: precio.tipoCamion,
-          precios: [],
-        };
-      }
-      preciosPorTipoCamion[tipoCamionId].precios.push(precio);
-    });
-
-    res.status(200).json({
-      preciosPorTipoCamion: Object.values(preciosPorTipoCamion),
-    });
-  } catch (error) {
-    console.error("Error al generar reporte de historial de precios:", error);
-    res.status(500).json({ message: "Error interno del servidor" });
+    return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
