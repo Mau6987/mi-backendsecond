@@ -440,7 +440,6 @@ export const reporteRendimientoPorTipoCamion = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
-
 // Reporte de historial de precios
 export const reporteHistorialPrecios = async (req, res) => {
   try {
