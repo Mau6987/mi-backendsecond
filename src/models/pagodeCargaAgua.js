@@ -18,6 +18,11 @@ export const pagoCargaAgua = bd.define('pagos_carga_agua', {
     allowNull: false,
     defaultValue: DataTypes.NOW
   },
+  activo: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+    allowNull: false,
+  },
   monto: {
     type: DataTypes.FLOAT,
     allowNull: false

@@ -36,6 +36,7 @@ export const cargaAgua = bd.define('cargas_agua', {
     allowNull: false
   }
 });
+//cambio
 
 // Relaciones
 tipoDeCamion.hasMany(cargaAgua, { foreignKey: 'tipoCamionId', sourceKey: 'id' });
