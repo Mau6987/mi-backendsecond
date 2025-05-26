@@ -19,7 +19,7 @@ export const getCargasAgua = async (req, res) => {
         },
         {
           model: tipoDeCamion,
-          as: "tipoDeCamion",
+          as: "tiposDeCamion",
         },
       ],
     });
@@ -42,7 +42,7 @@ export const getCargaAguaById = async (req, res) => {
         },
         {
           model: tipoDeCamion,
-          as: "tipoDeCamion",
+          as: "tiposDeCamion",
         },
       ],
     });
@@ -110,16 +110,14 @@ export const updateCargaAgua = async (req, res) => {
       return res.status(404).json({ message: "Carga de agua no encontrada" });
     }
 
-    // Si se está cambiando el tipo de camión, buscar el precio actual
-    if (tipoCamionId && tipoCamionId !== carga.tipoCamionId) {
-      const precioActual = await precioCargaAgua.findOne({
-        where: { activo: true },
-        order: [["fechaCreacion", "DESC"]],
-      });
+    // Obtener el último precio activo
+    const precioActual = await precioCargaAgua.findOne({
+      where: { activo: true },
+      order: [["fechaCreacion", "DESC"]],
+    });
 
-      if (precioActual) {
-        carga.costo = precioActual.valor; // Actualizar el costo con el nuevo precio
-      }
+    if (precioActual) {
+      carga.costo = precioActual.valor; // Actualizar el costo con el nuevo precio
     }
 
     if (fechaHora !== undefined) carga.fechaHora = fechaHora;
@@ -152,6 +150,8 @@ export const deleteCargaAgua = async (req, res) => {
     res.status(500).json({ message: "Error al desactivar la carga de agua" });
   }
 };
+
+// Resto de funciones (registrarCargaPorRFID, getCargasPorParametros, etc.) se mantienen igual
 
 export const registrarCargaPorRFID = async (req, res) => {
   const { numeroTarjetaRFID, tipoCamionId } = req.body;
