@@ -3,8 +3,6 @@ import { cargaAgua } from "../models/cargaAgua.js"
 import { usuario } from "../models/usuarios.js"
 import { tipoDeCamion } from "../models/tipoDeCamion.js"
 import { Op } from "sequelize"
-
-// Obtener todos los pagos de carga de agua
 export const getPagosCargaAgua = async (req, res) => {
   try {
     const { includeInactive } = req.query
@@ -16,12 +14,23 @@ export const getPagosCargaAgua = async (req, res) => {
         {
           model: usuario,
           as: "usuario",
-          attributes: ["id", "username", "nombre", "correo", "activo", "bloqueado"],
+          attributes: ["id", "username", "nombre", "correo", "carnet", "activo", "bloqueado"],
         },
         {
           model: cargaAgua,
           as: "cargas",
-          include: [tipoDeCamion],
+          include: [
+            {
+              model: tipoDeCamion,
+              as: "tipoDeCamion",
+              attributes: ["id", "descripcion", "cantidadDeAgua"]
+            },
+            {
+              model: usuario,
+              as: "usuario",
+              attributes: ["id", "username", "nombre", "carnet"]
+            }
+          ],
         },
       ],
     })
@@ -32,7 +41,6 @@ export const getPagosCargaAgua = async (req, res) => {
   }
 }
 
-// Función para obtener un pago de carga de agua por su ID
 export const getPagoCargaAguaById = async (req, res) => {
   const { id } = req.params
   try {
@@ -41,25 +49,38 @@ export const getPagoCargaAguaById = async (req, res) => {
         {
           model: usuario,
           as: "usuario",
-          attributes: ["id", "username", "nombre", "correo", "activo", "bloqueado"],
+          attributes: ["id", "username", "nombre", "correo", "carnet", "activo", "bloqueado"],
         },
         {
           model: cargaAgua,
           as: "cargas",
-          include: [tipoDeCamion],
+          include: [
+            {
+              model: tipoDeCamion,
+              as: "tipoDeCamion",
+              attributes: ["id", "descripcion", "cantidadDeAgua"]
+            },
+            {
+              model: usuario,
+              as: "usuario",
+              attributes: ["id", "username", "nombre", "carnet"]
+            }
+          ],
         },
       ],
     })
+
     if (!pago) {
-      res.status(404).json({ message: "Pago de carga de agua no encontrado" })
-    } else {
-      res.status(200).json(pago)
+      return res.status(404).json({ message: "Pago de carga de agua no encontrado" })
     }
+
+    res.status(200).json(pago)
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: "Error al obtener el pago de carga de agua" })
   }
 }
+
 
 export const createPagoCargaAgua2 = async (req, res) => {
   const { usuarioId, monto, numeroCargas } = req.body
