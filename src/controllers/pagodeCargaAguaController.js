@@ -14,7 +14,7 @@ export const getPagosCargaAgua = async (req, res) => {
         {
           model: usuario,
           as: "usuario",
-          attributes: ["id", "username", "nombre", "correo", "carnet", "activo", "bloqueado"],
+          attributes: ["id", "username", "nombre", "correo", "ci", "activo", "bloqueado"],
         },
         {
           model: cargaAgua,
@@ -22,13 +22,13 @@ export const getPagosCargaAgua = async (req, res) => {
           include: [
             {
               model: tipoDeCamion,
-              as: "tipoDeCamion",
+              as: "tiposDeCamion",
               attributes: ["id", "descripcion", "cantidadDeAgua"]
             },
             {
               model: usuario,
               as: "usuario",
-              attributes: ["id", "username", "nombre", "carnet"]
+              attributes: ["id", "username", "nombre", "ci"]
             }
           ],
         },
@@ -49,7 +49,7 @@ export const getPagoCargaAguaById = async (req, res) => {
         {
           model: usuario,
           as: "usuario",
-          attributes: ["id", "username", "nombre", "correo", "carnet", "activo", "bloqueado"],
+          attributes: ["id", "username", "nombre", "correo", "ci", "activo", "bloqueado"],
         },
         {
           model: cargaAgua,
@@ -57,13 +57,13 @@ export const getPagoCargaAguaById = async (req, res) => {
           include: [
             {
               model: tipoDeCamion,
-              as: "tipoDeCamion",
+              as: "tiposDeCamion",
               attributes: ["id", "descripcion", "cantidadDeAgua"]
             },
             {
               model: usuario,
               as: "usuario",
-              attributes: ["id", "username", "nombre", "carnet"]
+              attributes: ["id", "username", "nombre", "ci"]
             }
           ],
         },
@@ -396,7 +396,7 @@ export const getCargasDePropietarioDeuda = async (req, res) => {
             bloqueado: false,
           },
         },
-        tipoDeCamion,
+        tiposDeCamion,
       ],
     })
 
@@ -535,7 +535,7 @@ export const getPagosPorParametros = async (req, res) => {
         {
           model: cargaAgua,
           as: "cargas",
-          include: [tipoDeCamion],
+          include: [tiposDeCamion],
         },
       ],
     })
