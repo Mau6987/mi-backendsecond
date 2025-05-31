@@ -3,83 +3,76 @@ import { cargaAgua } from "../models/cargaAgua.js"
 import { usuario } from "../models/usuarios.js"
 import { tipoDeCamion } from "../models/tipoDeCamion.js"
 import { Op } from "sequelize"
+// Ejemplo para getPagosCargaAgua
+
+
+
 export const getPagosCargaAgua = async (req, res) => {
   try {
-    const { includeInactive } = req.query
-    const where = includeInactive === "true" ? {} : { activo: true }
-
+    // Traer todos los pagos con usuario
     const pagos = await pagoCargaAgua.findAll({
-      where,
-      include: [
-        {
-          model: usuario,
-          as: "usuario",
-          attributes: ["id", "username", "nombre", "correo", "ci", "activo", "bloqueado"],
-        },
-        {
-          model: cargaAgua,
-          as: "cargas",
-          include: [
-            {
-              model: tipoDeCamion,
-              as: "tiposDeCamion",
-              attributes: ["id", "descripcion", "cantidadDeAgua"]
-            },
-            {
-              model: usuario,
-              as: "usuario",
-              attributes: ["id", "username", "nombre", "ci"]
-            }
-          ],
-        },
-      ],
-    })
-    res.status(200).json(pagos)
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: "Error al obtener los pagos de carga de agua" })
-  }
-}
+      include: {
+        model: usuario,
+        as: 'usuario',
+        attributes: ['id', 'username', 'nombre', 'correo', 'ci', 'activo', 'bloqueado']
+      }
+    });
 
+    // Para cada pago, buscar cargas según cargaAguaIds
+    const pagosConCargas = await Promise.all(
+      pagos.map(async pago => {
+        const cargas = await cargaAgua.findAll({
+          where: {
+            id: pago.cargaAguaIds  // Array de IDs para filtrar
+          },
+          attributes: ['id', 'fechaHora', 'estado', 'usuarioId', 'tipoCamionId', 'costo', 'activo']
+        });
+
+        // Devolver objeto con cargas en el campo cargas
+        return {
+          ...pago.toJSON(),
+          cargas
+        };
+      })
+    );
+
+    res.json(pagosConCargas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error obteniendo pagos con cargas' });
+  }
+};
 export const getPagoCargaAguaById = async (req, res) => {
-  const { id } = req.params
   try {
+    const { id } = req.params;
+
     const pago = await pagoCargaAgua.findByPk(id, {
-      include: [
-        {
-          model: usuario,
-          as: "usuario",
-          attributes: ["id", "username", "nombre", "correo", "ci", "activo", "bloqueado"],
-        },
-        {
-          model: cargaAgua,
-          as: "cargas",
-          include: [
-            {
-              model: tipoDeCamion,
-              as: "tiposDeCamion",
-              attributes: ["id", "descripcion", "cantidadDeAgua"]
-            },
-            {
-              model: usuario,
-              as: "usuario",
-              attributes: ["id", "username", "nombre", "ci"]
-            }
-          ],
-        },
-      ],
-    })
+      include: {
+        model: usuario,
+        as: 'usuario',
+        attributes: ['id', 'username', 'nombre', 'correo', 'ci', 'activo', 'bloqueado']
+      }
+    });
 
-    if (!pago) {
-      return res.status(404).json({ message: "Pago de carga de agua no encontrado" })
-    }
+    if (!pago) return res.status(404).json({ message: 'Pago no encontrado' });
 
-    res.status(200).json(pago)
+    const cargas = await cargaAgua.findAll({
+      where: {
+        id: pago.cargaAguaIds
+      },
+      attributes: ['id', 'fechaHora', 'estado', 'usuarioId', 'tipoCamionId', 'costo', 'activo']
+    });
+
+    res.json({
+      ...pago.toJSON(),
+      cargas
+    });
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: "Error al obtener el pago de carga de agua" })
+    console.error(error);
+    res.status(500).json({ message: 'Error obteniendo pago con cargas' });
   }
-}
+};
+
 
 
 export const createPagoCargaAgua2 = async (req, res) => {
