@@ -282,42 +282,46 @@ export const updatePagoCargaAgua = async (req, res) => {
     res.status(500).json({ message: "Error interno del servidor" })
   }
 }
-
-// Eliminar un pago de carga de agua (soft delete)
 export const deletePagoCargaAgua = async (req, res) => {
   try {
-    const { id } = req.params
-    const pagoCargaAguaExistente = await pagoCargaAgua.findByPk(id, {
-      include: [{ model: cargaAgua, as: "cargas" }],
-    })
+    const { id } = req.params;
+    const pagoCargaAguaExistente = await pagoCargaAgua.findByPk(id);
 
     if (!pagoCargaAguaExistente) {
-      return res.status(404).json({ message: "Pago de carga de agua no encontrado" })
+      return res.status(404).json({ message: "Pago de carga de agua no encontrado" });
     }
 
-    // Extraer los IDs de las cargas de agua asociadas al pago
-    const cargaIds = pagoCargaAguaExistente.cargas.map((carga) => carga.id)
+    // Usar directamente cargaAguaIds del modelo
+    const cargaIds = pagoCargaAguaExistente.cargaAguaIds;
+    console.log("Cargas a actualizar:", cargaIds);
 
     // Actualizar el estado de las cargas de agua a "deuda"
-    await cargaAgua.update(
+    const [updatedCount] = await cargaAgua.update(
       { estado: "deuda" },
       {
-        where: { id: cargaIds },
-      },
-    )
+        where: { 
+          id: cargaIds,
+          activo: true // Asegurar que solo actualices cargas activas
+        },
+      }
+    );
+
+    console.log("Cargas actualizadas:", updatedCount);
 
     // Soft delete - marcar como inactivo
-    pagoCargaAguaExistente.activo = false
-    await pagoCargaAguaExistente.save()
+    pagoCargaAguaExistente.activo = false;
+    await pagoCargaAguaExistente.save();
 
     res.status(200).json({
       message: "Pago de carga de agua desactivado exitosamente y cargas actualizadas a deuda",
-    })
+      cargasActualizadas: updatedCount
+    });
   } catch (error) {
-    console.error("Error al desactivar el pago de carga de agua", error)
-    res.status(500).json({ message: "Error interno del servidor" })
+    console.error("Error al desactivar el pago de carga de agua", error);
+    res.status(500).json({ message: "Error interno del servidor" });
   }
 }
+
 
 // Controlador para obtener usuarios por rol
 export const getUsuariosPorRol = async (req, res) => {
