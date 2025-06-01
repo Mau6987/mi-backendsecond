@@ -11,6 +11,16 @@ import {
   verificarBloqueo,
   getUsuariosPorRol
 } from "../controllers/controllerUsuario.js";
+
+
+import {
+  reporteCargasPorPeriodo,
+  reporteCargasPorUsuario,
+  reportePagosPorPeriodo,
+  reporteDeudasPorUsuario,
+  reporteDashboard,
+}  from "../controllers/reportes2controller.js"; 
+
 import { login, refreshToken } from "../controllers/authController.js";
 import { 
   getCargasAgua, 
@@ -22,16 +32,7 @@ import {
   getCargasPorParametros2,
   registrarCargaPorRFID
 } from '../controllers/cargaAguaController.js';
-import {
-  reporteCargasPorPeriodo,
-  reportePagosPorPeriodo,
-  reporteUsuariosPorActividad,
-  reporteDeudas,
-  reporteIngresos,
-  reporteUsuariosBloqueados,
-  reporteRendimientoPorTipoCamion,
-  reporteHistorialPrecios,
-} from "../controllers/reportesController.js"; 
+
 
 import {
   getPrecios,
@@ -72,6 +73,8 @@ import {
   getPagosPorParametros2,
   toggleActivoPago,
 } from '../controllers/pagodeCargaAguaController.js'; 
+
+import reportesController from '../controllers/reportes2controller.js';
 
 const router = Router();
 
@@ -142,15 +145,23 @@ router.get("/precios/:id", getPrecioById);
 router.post("/precios", createPrecio);
 router.put("/precios/:id", updatePrecio);
 router.delete("/precios/:id", deletePrecio);
-
 // Rutas para reportes
-router.post("/reportes/cargas/periodo", reporteCargasPorPeriodo);
-router.post("/reportes/pagos/periodo", reportePagosPorPeriodo);
-router.post("/reportes/usuarios/actividad", reporteUsuariosPorActividad);
-router.get("/reportes/deudas", reporteDeudas);
-router.post("/reportes/ingresos", reporteIngresos);
-router.get("/reportes/usuarios/bloqueados", reporteUsuariosBloqueados);
-router.post("/reportes/rendimiento/tipoCamion", reporteRendimientoPorTipoCamion);
-router.get("/reportes/historial/precios", reporteHistorialPrecios);
+
+
+
+//
+
+// Rutas para reportes de cargas
+router.post("/cargas-por-periodo", reporteCargasPorPeriodo)
+router.post("/cargas-por-usuario", reporteCargasPorUsuario)
+
+// Rutas para reportes de pagos
+router.post("/pagos-por-periodo", reportePagosPorPeriodo)
+
+// Rutas para reportes de deudas
+router.get("/deudas-por-usuario", reporteDeudasPorUsuario)
+
+// Rutas para reportes especiales
+router.post("/dashboard", reporteDashboard)
 
 export default router;
