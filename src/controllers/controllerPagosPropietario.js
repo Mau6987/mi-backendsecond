@@ -25,7 +25,7 @@ import { tipoDeCamion } from '../models/tipoDeCamion.js';
            activo: true // Asegúrate de que los pagos también estén activos
          },
          include: [
-           { model: usuario, as: 'usuario', attributes: ['id', 'username', 'nombre', 'correo'] },
+           { model: usuario, as: 'usuario', attributes: ['id', 'username', 'nombre', 'correo', 'ci'] },
            { model: cargaAgua, as: 'cargas', include: [tipoDeCamion] }
          ]
        });

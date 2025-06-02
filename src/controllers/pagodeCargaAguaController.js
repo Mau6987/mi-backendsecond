@@ -453,7 +453,7 @@ export const getPagosDeUsuario = async (req, res) => {
         {
           model: usuario,
           as: "usuario",
-          attributes: ["id", "username", "nombre", "correo", "activo", "bloqueado"],
+          attributes: ["id", "username", "nombre", "correo", "ci","activo", "bloqueado"],
         },
       ],
     })
